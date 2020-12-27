@@ -1,6 +1,6 @@
-# calculadora
+# Calculadora Básica
 
-A new Flutter project.
+Calculadora básica implementada en dart por medio de Flutter.
 
 ## Getting Started
 
