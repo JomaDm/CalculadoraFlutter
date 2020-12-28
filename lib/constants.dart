@@ -16,7 +16,23 @@ const TextStyle kNumberButtonStyle = TextStyle(
   fontSize: 20.0,
 );
 
-const TextStyle kTextAreaStyle = TextStyle(
+const TextStyle kTextAreaStyleBottom = TextStyle(
   color: Colors.white,
   fontSize: 40.0,
+);
+const TextStyle kTextAreaStyleTop = TextStyle(
+  color: Colors.white,
+  fontSize: 20.0,
+);
+
+const TextStyle kHistoryItemTextStyle = TextStyle(
+  fontSize: 25.0,
+);
+const TextStyle kHistoryItemOperationStyle = TextStyle(
+  color: kOperationButtonContentColor,
+  fontSize: 23.0,
+);
+const TextStyle kHistoryItemEqualsStyle = TextStyle(
+  color: kActionButtonContentColor,
+  fontSize: 23.0,
 );

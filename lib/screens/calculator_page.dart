@@ -1,8 +1,16 @@
-import 'package:calculadora/components/text_area.dart';
 import 'package:calculadora/constants.dart';
+import 'package:calculadora/screens/history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:calculadora/components/calculator_button.dart';
+import 'package:calculadora/history.dart';
+
+enum OperationType {
+  suma,
+  resta,
+  mult,
+  div,
+}
 
 class Calculator extends StatefulWidget {
   @override
@@ -10,7 +18,79 @@ class Calculator extends StatefulWidget {
 }
 
 class _CalculatorState extends State<Calculator> {
-  String contentButt = '';
+  String contentTop = '';
+  String contentBottom = '';
+  String operation;
+  History operationHistory = History();
+
+  void addNumber(String number) {
+    setState(() {
+      contentBottom += number;
+    });
+  }
+
+  void operationTypeWrite(OperationType opera) {
+    //Calcular Res
+    setState(() {
+      if (operation != '') {
+        equals();
+      }
+      contentTop = contentBottom;
+      contentBottom = '';
+      switch (opera) {
+        case OperationType.suma:
+          operation = '+';
+          break;
+        case OperationType.resta:
+          operation = '-';
+          break;
+        case OperationType.mult:
+          operation = 'x';
+          break;
+        case OperationType.div:
+          operation = '/';
+          break;
+        default:
+          print("error");
+          break;
+      }
+    });
+  }
+
+  void equals() {
+    double result;
+    setState(() {
+      switch (operation) {
+        case '+':
+          result = double.parse(contentTop) + double.parse(contentBottom);
+          break;
+        case '-':
+          result = double.parse(contentTop) - double.parse(contentBottom);
+          break;
+        case 'x':
+          result = double.parse(contentTop) * double.parse(contentBottom);
+          break;
+        case '/':
+          if (contentBottom != '0') {
+            result = double.parse(contentTop) / double.parse(contentBottom);
+          } else {
+            result = double.infinity;
+          }
+          break;
+      }
+      operationHistory.addToHistory(
+        contentTop,
+        operation,
+        contentBottom,
+        result.toStringAsFixed(2),
+      );
+      operationHistory.printHistory();
+
+      contentTop = '';
+      operation = '';
+      contentBottom = result.toStringAsFixed(2);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +100,40 @@ class _CalculatorState extends State<Calculator> {
           children: [
             Expanded(
               flex: 3,
-              child: Container(
-                alignment: Alignment.bottomRight,
-                child: Text(
-                  contentButt == null ? '' : contentButt,
-                  style: kTextAreaStyle,
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: Container(
+                      alignment: Alignment.bottomRight,
+                      child: Text(
+                        contentTop == null ? '' : contentTop,
+                        style: kTextAreaStyleTop,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        operation == null ? '' : operation,
+                        style: kTextAreaStyleTop,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      alignment: Alignment.bottomRight,
+                      child: Text(
+                        contentBottom == null ? '' : contentBottom,
+                        style: kTextAreaStyleBottom,
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
             Expanded(
@@ -41,7 +149,9 @@ class _CalculatorState extends State<Calculator> {
                         CalculatorButton(
                           onPressed: () {
                             setState(() {
-                              contentButt = '';
+                              contentBottom = '';
+                              contentTop = '';
+                              operation = '';
                             });
                           },
                           child: Text(
@@ -52,7 +162,7 @@ class _CalculatorState extends State<Calculator> {
                         CalculatorButton(
                           onPressed: () {
                             setState(() {
-                              contentButt = '';
+                              contentBottom = '';
                             });
                           },
                           child: Text(
@@ -63,8 +173,8 @@ class _CalculatorState extends State<Calculator> {
                         CalculatorButton(
                           onPressed: () {
                             setState(() {
-                              contentButt = contentButt.substring(
-                                  0, contentButt.length - 1);
+                              contentBottom = contentBottom.substring(
+                                  0, contentBottom.length - 1);
                             });
                           },
                           child: Icon(
@@ -74,9 +184,7 @@ class _CalculatorState extends State<Calculator> {
                         ),
                         CalculatorButton(
                           onPressed: () {
-                            setState(() {
-                              contentButt += '/';
-                            });
+                            operationTypeWrite(OperationType.div);
                           },
                           child: Icon(
                             FontAwesomeIcons.divide,
@@ -90,9 +198,7 @@ class _CalculatorState extends State<Calculator> {
                       children: [
                         CalculatorButton(
                           onPressed: () {
-                            setState(() {
-                              contentButt += '7';
-                            });
+                            addNumber('7');
                           },
                           child: Text(
                             '7',
@@ -101,9 +207,7 @@ class _CalculatorState extends State<Calculator> {
                         ),
                         CalculatorButton(
                           onPressed: () {
-                            setState(() {
-                              contentButt += '8';
-                            });
+                            addNumber('8');
                           },
                           child: Text(
                             '8',
@@ -112,9 +216,7 @@ class _CalculatorState extends State<Calculator> {
                         ),
                         CalculatorButton(
                           onPressed: () {
-                            setState(() {
-                              contentButt += '9';
-                            });
+                            addNumber('9');
                           },
                           child: Text(
                             '9',
@@ -123,9 +225,7 @@ class _CalculatorState extends State<Calculator> {
                         ),
                         CalculatorButton(
                           onPressed: () {
-                            setState(() {
-                              contentButt += '*';
-                            });
+                            operationTypeWrite(OperationType.mult);
                           },
                           child: Icon(
                             FontAwesomeIcons.times,
@@ -139,9 +239,7 @@ class _CalculatorState extends State<Calculator> {
                       children: [
                         CalculatorButton(
                           onPressed: () {
-                            setState(() {
-                              contentButt += '6';
-                            });
+                            addNumber('6');
                           },
                           child: Text(
                             '6',
@@ -150,9 +248,7 @@ class _CalculatorState extends State<Calculator> {
                         ),
                         CalculatorButton(
                           onPressed: () {
-                            setState(() {
-                              contentButt += '5';
-                            });
+                            addNumber('5');
                           },
                           child: Text(
                             '5',
@@ -161,9 +257,7 @@ class _CalculatorState extends State<Calculator> {
                         ),
                         CalculatorButton(
                           onPressed: () {
-                            setState(() {
-                              contentButt += '4';
-                            });
+                            addNumber('4');
                           },
                           child: Text(
                             '4',
@@ -172,9 +266,7 @@ class _CalculatorState extends State<Calculator> {
                         ),
                         CalculatorButton(
                           onPressed: () {
-                            setState(() {
-                              contentButt += '-';
-                            });
+                            operationTypeWrite(OperationType.resta);
                           },
                           child: Icon(
                             FontAwesomeIcons.minus,
@@ -188,9 +280,7 @@ class _CalculatorState extends State<Calculator> {
                       children: [
                         CalculatorButton(
                           onPressed: () {
-                            setState(() {
-                              contentButt += '3';
-                            });
+                            addNumber('3');
                           },
                           child: Text(
                             '3',
@@ -199,9 +289,7 @@ class _CalculatorState extends State<Calculator> {
                         ),
                         CalculatorButton(
                           onPressed: () {
-                            setState(() {
-                              contentButt += '2';
-                            });
+                            addNumber('2');
                           },
                           child: Text(
                             '2',
@@ -210,9 +298,7 @@ class _CalculatorState extends State<Calculator> {
                         ),
                         CalculatorButton(
                           onPressed: () {
-                            setState(() {
-                              contentButt += '1';
-                            });
+                            addNumber('1');
                           },
                           child: Text(
                             '1',
@@ -221,9 +307,7 @@ class _CalculatorState extends State<Calculator> {
                         ),
                         CalculatorButton(
                           onPressed: () {
-                            setState(() {
-                              contentButt += '+';
-                            });
+                            operationTypeWrite(OperationType.suma);
                           },
                           child: Icon(
                             FontAwesomeIcons.plus,
@@ -237,9 +321,13 @@ class _CalculatorState extends State<Calculator> {
                       children: [
                         CalculatorButton(
                           onPressed: () {
-                            setState(() {
-                              contentButt += 'h';
-                            });
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HistoryPage(
+                                        operationsHistory: operationHistory,
+                                      )),
+                            );
                           },
                           child: Icon(
                             FontAwesomeIcons.history,
@@ -248,7 +336,7 @@ class _CalculatorState extends State<Calculator> {
                         CalculatorButton(
                           onPressed: () {
                             setState(() {
-                              contentButt += '0';
+                              contentBottom += '0';
                             });
                           },
                           child: Text(
@@ -259,7 +347,7 @@ class _CalculatorState extends State<Calculator> {
                         CalculatorButton(
                           onPressed: () {
                             setState(() {
-                              contentButt += '.';
+                              contentBottom += '.';
                             });
                           },
                           child: Text(
@@ -269,9 +357,7 @@ class _CalculatorState extends State<Calculator> {
                         ),
                         CalculatorButton(
                           onPressed: () {
-                            setState(() {
-                              contentButt += '=';
-                            });
+                            equals();
                           },
                           child: Icon(
                             FontAwesomeIcons.equals,
