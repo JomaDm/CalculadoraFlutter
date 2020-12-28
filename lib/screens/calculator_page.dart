@@ -32,7 +32,7 @@ class _CalculatorState extends State<Calculator> {
   void operationTypeWrite(OperationType opera) {
     //Calcular Res
     setState(() {
-      if (operation != '') {
+      if (operation != '' && contentTop!='') {
         equals();
       }
       contentTop = contentBottom;
@@ -82,13 +82,13 @@ class _CalculatorState extends State<Calculator> {
         contentTop,
         operation,
         contentBottom,
-        result.toStringAsFixed(2),
+        result != null ? result.toStringAsFixed(2) : '',
       );
-      operationHistory.printHistory();
+      //operationHistory.printHistory();
 
       contentTop = '';
       operation = '';
-      contentBottom = result.toStringAsFixed(2);
+      contentBottom = result != null ? result.toStringAsFixed(2) : '';
     });
   }
 
