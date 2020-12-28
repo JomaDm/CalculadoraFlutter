@@ -12,6 +12,10 @@ enum OperationType {
   div,
 }
 
+//TODO: Boton doble cero
+//TODO: Boton de respuesta anterior
+//TODO: Boton raiz cuadrada
+//TODO: Boton potencia
 class Calculator extends StatefulWidget {
   @override
   _CalculatorState createState() => _CalculatorState();
@@ -24,6 +28,7 @@ class _CalculatorState extends State<Calculator> {
   History operationHistory = History();
 
   void addNumber(String number) {
+    //TODO: establecer un limite en la cantidad de numeros en pantalla
     setState(() {
       contentBottom += number;
     });
@@ -32,7 +37,7 @@ class _CalculatorState extends State<Calculator> {
   void operationTypeWrite(OperationType opera) {
     //Calcular Res
     setState(() {
-      if (operation != '' && contentTop!='') {
+      if (operation != '' && contentTop != '') {
         equals();
       }
       contentTop = contentBottom;

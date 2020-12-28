@@ -2,6 +2,7 @@ import 'package:calculadora/history.dart';
 import 'package:flutter/material.dart';
 import 'package:calculadora/components/history_item.dart';
 
+//TODO: boton para vaciar historial
 class HistoryPage extends StatelessWidget {
   final History operationsHistory;
 
