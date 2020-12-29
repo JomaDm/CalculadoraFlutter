@@ -15,4 +15,8 @@ class History {
   List<String> getHistroy() {
     return this._history;
   }
+
+  void clearHistory() {
+    this._history.clear();
+  }
 }

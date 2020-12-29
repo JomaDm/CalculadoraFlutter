@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:calculadora/constants.dart';
 import 'package:calculadora/screens/history_page.dart';
 import 'package:flutter/material.dart';
@@ -25,11 +27,18 @@ class _CalculatorState extends State<Calculator> {
   String contentTop = '';
   String contentBottom = '';
   String operation;
+  String ans = '';
   History operationHistory = History();
+  bool afterOperation = false;
 
   void addNumber(String number) {
     //TODO: establecer un limite en la cantidad de numeros en pantalla
     setState(() {
+      if (afterOperation) {
+        ans = contentBottom;
+        contentBottom = '';
+        afterOperation = false;
+      }
       contentBottom += number;
     });
   }
@@ -94,6 +103,39 @@ class _CalculatorState extends State<Calculator> {
       contentTop = '';
       operation = '';
       contentBottom = result != null ? result.toStringAsFixed(2) : '';
+      afterOperation = true;
+    });
+  }
+
+  void doSqrt() {
+    setState(() {
+      double result = 0;
+      if (contentBottom != '' && contentTop == '' && operation == '') {
+        result = pow(double.parse(contentBottom), 0.5).toDouble();
+        operationHistory.addToHistory(
+          '',
+          'sqrt',
+          contentBottom,
+          result != null ? result.toStringAsFixed(2) : '',
+        );
+        contentBottom = result.toStringAsFixed(2);
+      }
+    });
+  }
+
+  void doPow2() {
+    setState(() {
+      double result = 0;
+      if (contentBottom != '' && contentTop == '' && operation == '') {
+        result = pow(double.parse(contentBottom), 2).toDouble();
+        operationHistory.addToHistory(
+          '',
+          'pow2',
+          contentBottom,
+          result != null ? result.toStringAsFixed(2) : '',
+        );
+        contentBottom = result.toStringAsFixed(2);
+      }
     });
   }
 
@@ -104,12 +146,12 @@ class _CalculatorState extends State<Calculator> {
         body: Column(
           children: [
             Expanded(
-              flex: 3,
+              flex: 2,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Expanded(
-                    flex: 3,
+                    flex: 2,
                     child: Container(
                       alignment: Alignment.bottomRight,
                       child: Text(
@@ -329,9 +371,10 @@ class _CalculatorState extends State<Calculator> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => HistoryPage(
-                                        operationsHistory: operationHistory,
-                                      )),
+                                builder: (context) => HistoryPage(
+                                  operationsHistory: operationHistory,
+                                ),
+                              ),
                             );
                           },
                           child: Icon(
@@ -340,13 +383,65 @@ class _CalculatorState extends State<Calculator> {
                         ),
                         CalculatorButton(
                           onPressed: () {
-                            setState(() {
-                              contentBottom += '0';
-                            });
+                            addNumber('0');
                           },
                           child: Text(
                             '0',
                             style: kNumberButtonStyle,
+                          ),
+                        ),
+                        CalculatorButton(
+                          onPressed: () {
+                            setState(() {
+                              addNumber('0');
+                              addNumber('0');
+                            });
+                          },
+                          child: Text(
+                            '00',
+                            style: kNumberButtonStyle,
+                          ),
+                        ),
+                        CalculatorButton(
+                          onPressed: () {
+                            doSqrt();
+                          },
+                          child: Icon(
+                            FontAwesomeIcons.squareRootAlt,
+                            color: kOperationButtonContentColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        CalculatorButton(
+                          onPressed: () {
+                            doPow2();
+                          },
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  SizedBox(
+                                    width: 5.0,
+                                  ),
+                                  Text(
+                                    '2',
+                                    textAlign: TextAlign.right,
+                                  )
+                                ],
+                              ),
+                              Text(
+                                'X',
+                                textAlign: TextAlign.left,
+                                style: kNumberButtonStyle,
+                              ),
+                            ],
                           ),
                         ),
                         CalculatorButton(
@@ -359,6 +454,15 @@ class _CalculatorState extends State<Calculator> {
                             '.',
                             style: kNumberButtonStyle,
                           ),
+                        ),
+                        CalculatorButton(
+                          child: Text(
+                            'ANS',
+                            style: kNumberButtonStyle,
+                          ),
+                          onPressed: () {
+                            addNumber(ans);
+                          },
                         ),
                         CalculatorButton(
                           onPressed: () {

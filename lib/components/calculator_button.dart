@@ -16,7 +16,7 @@ class CalculatorButton extends StatelessWidget {
       elevation: 2.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
       constraints: BoxConstraints.tightFor(
-        height: 75.0,
+        height: 70.0,
         width: 75.0,
       ),
     );
